@@ -1,41 +1,104 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // Application name
-      title: 'Flutter Hello World',
-      // Application theme data, you can set the colors for the application as
-      // you want
-      theme: ThemeData(
-        // useMaterial3: false,
-        primarySwatch: Colors.blue,
-      ),
-      // A widget which will be started on application startup
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MenuMakanan(),
+  ));
 }
 
-class MyHomePage extends StatelessWidget {
-  final String title;
-  const MyHomePage({super.key, required this.title});  
+class MenuMakanan extends StatefulWidget {
+  @override
+  State<MenuMakanan> createState() => MenuMakananState();
+}
+
+class MenuMakananState extends State<MenuMakanan> {
+  List<String> menu = ["Soto", "Rawon"];
+  List<int> harga = [10000, 15000];
+  List<String> gambar = ["assets/soto.jpg", "assets/rawon.jpg"];
+
+  List<TextEditingController> porsi = [
+    TextEditingController(text: "1"),
+    TextEditingController(text: "1"),
+  ];
+
+  int get total {
+    int hasil = 0;
+
+    for (int i = 0; i < menu.length; i++) {
+      int jumlah = int.tryParse(porsi[i].text) ?? 0;
+      hasil += jumlah * harga[i];
+    }
+
+    return hasil;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // The title text which will be shown on the action bar
-        title: Text(title),
+        title: Text("Menu Makanan"),
+        backgroundColor: Colors.pink[200],
       ),
-      body: Center(
-        child: Text(
-          'Hello, World!',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            children: [
+              Table(
+                border: TableBorder.all(),
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(
+                      color: Colors.pink[100],
+                    ),
+                    children: [
+                      Text("No"),
+                      Text("Gambar"),
+                      Text("Menu"),
+                      Text("Harga"),
+                      Text("Porsi"),
+                    ],
+                  ),
+                  for (int i = 0; i < menu.length; i++)
+                    TableRow(
+                      children: [
+                        Text("${i + 1}"),
+                        Image.asset(
+                          gambar[i],
+                          height: 70,
+                        ),
+                        Text(menu[i]),
+                        Text("Rp ${harga[i]}"),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: TextField(
+                            controller: porsi[i],
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Porsi",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Text(
+                "Total Harga: Rp $total",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink[400],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
